@@ -1,292 +1,418 @@
+/faqe-bastes-advanced
+│
+├─ index.html        ← faqja kryesore (login/register dhe ndeshje)
+├─ style.css         ← stili i faqes
+├─ app.js            ← logjika JS
+├─ users.json        ← përdorues demo
+├─ matches.json      ← ndeshjet demo
+└─ history.json      ← historiku i bastesh (demo)
+[
+  {
+    "username": "user1",
+    "password": "1234", 
+    "balance": 100
+  },
+  {
+    "username": "user2",
+    "password": "abcd",
+    "balance": 150
+  }
+]
+[
+  {
+    "id": 1,
+    "home": "Real Madrid",
+    "away": "Barcelona",
+    "homeOdd": 1.8,
+    "awayOdd": 2.0,
+    "result": null
+  },
+  {
+    "id": 2,
+    "home": "Manchester United",
+    "away": "Liverpool",
+    "homeOdd": 2.1,
+    "awayOdd": 1.9,
+    "result": null
+  }
+]
+[]
 <!DOCTYPE html>
-<html lang="sq">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Demo Baste</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f5f5f5;
-    }
-
-    header {
-      background: #222;
-      color: #fff;
-      padding: 15px;
-      text-align: center;
-    }
-
-    nav a {
-      color: white;
-      margin: 0 10px;
-      text-decoration: none;
-    }
-
-    main {
-      padding: 20px;
-    }
-
-    table {
-      width: 90%;
-      margin: 20px auto;
-      border-collapse: collapse;
-      background: white;
-    }
-
-    table, th, td {
-      border: 1px solid #ddd;
-      text-align: center;
-      padding: 10px;
-    }
-
-    th {
-      background: #eee;
-    }
-
-    footer {
-      text-align: center;
-      padding: 15px;
-      background: #222;
-      color: white;
-      margin-top: 30px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faqe Bastes Profesionale Demo</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Demo Faqe Bastesh</h1>
-    <nav>
-      <a href="#">Kreu</a>
-      <a href="#">Ndeshje</a>
-      <a href="#">Kuota</a>
-      <a href="#">Slip Basti</a>
-    </nav>
-  </header>
 
-  <main>
-    <section id="matches">
-      <h2>Ndeshjet e Ditës</h2>
-      <table>
-        <tr>
-          <th>Ndeshja</th>
-          <th>1</th>
-          <th>X</th>
-          <th>2</th>
-        </tr>
-        <tr>
-          <td>Real Madrid - Barcelona</td>
-          <td>2.10</td>
-          <td>3.50</td>
-          <td>3.00</td>
-        </tr>
-        <tr>
-          <td>Inter - Milan</td>
-          <td>2.40</td>
-          <td>3.20</td>
-          <td>2.90</td>
-        </tr>
-      </table>
-    </section>
-  </main>
+<header>
+    <h1>Faqe Bastes Demo</h1>
+    <div id="userPanel" style="display:none">
+        Përdoruesi: <span id="username"></span> | Bilanci: <span id="balance"></span> €
+        <button onclick="logout()">Dil</button>
+    </div>
+</header>
 
-  <footer>
-    <p>⚠️ Demo vetëm për testim - nuk ka baste reale</p>
-  </footer>
+<main>
+    <div id="loginPanel">
+        <h2>Login</h2>
+        <input type="text" id="loginUser" placeholder="Username">
+        <input type="password" id="loginPass" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <p>ose regjistrohu më poshtë</p>
+        <input type="text" id="regUser" placeholder="Username">
+        <input type="password" id="regPass" placeholder="Password">
+        <button onclick="register()">Regjistrohu</button>
+    </div>
+
+    <div id="betsPanel" style="display:none">
+        <h2>Ndeshjet</h2>
+        <div id="matches"></div>
+        <h2>Cart Bastesh</h2>
+        <div id="betCart"></div>
+        <button onclick="placeBets()">Vendos Bastet</button>
+        <h2>Historiku i Bastesh</h2>
+        <div id="history"></div>
+    </div>
+</main>
+
+<script src="app.js"></script>
 </body>
 </html>
-<!DOCTYPE html>
-<html lang="sq">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Demo Baste</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f5f5f5; }
-    header { background: #222; color: #fff; padding: 15px; text-align: center; }
-    nav a { color: white; margin: 0 10px; text-decoration: none; }
-    main { display: flex; justify-content: space-between; padding: 20px; }
-    table { width: 65%; border-collapse: collapse; background: white; }
-    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-    th { background: #eee; }
-    #slip { width: 30%; background: #fff; padding: 15px; border: 1px solid #ddd; }
-    .odd { cursor: pointer; color: blue; }
-    footer { text-align: center; padding: 15px; background: #222; color: white; margin-top: 30px; }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Demo Faqe Bastesh</h1>
-    <nav>
-      <a href="#">Kreu</a>
-      <a href="#">Ndeshje</a>
-      <a href="#">Kuota</a>
-      <a href="#">Slip Basti</a>
-    </nav>
-  </header>
+body { font-family: Arial; background:#f5f5f5; margin:0; }
+header { background:#2c3e50; color:white; padding:15px; text-align:center; }
+#matches, #betCart, #history { margin:20px; }
+.match, .historyItem { background:white; padding:15px; margin-bottom:10px; border-radius:5px; }
+button { background:#27ae60; color:white; border:none; padding:8px 12px; margin-right:5px; border-radius:4px; cursor:pointer; }
+button:hover { background:#2ecc71; }
+input { padding:6px; margin:5px 0; }
+let users = [];
+let currentUser = null;
+let matches = [];
+let betCart = [];
+let history = [];
 
-  <main>
-    <!-- Ndeshjet -->
-    <section>
-      <h2>Ndeshjet e Ditës</h2>
-      <table>
-        <tr>
-          <th>Ndeshja</th><th>1</th><th>X</th><th>2</th>
-        </tr>
-        <tr>
-          <td>Real Madrid - Barcelona</td>
-          <td class="odd" onclick="addBet('Real Madrid',2.10)">2.10</td>
-          <td class="odd" onclick="addBet('Barazim',3.50)">3.50</td>
-          <td class="odd" onclick="addBet('Barcelona',3.00)">3.00</td>
-        </tr>
-        <tr>
-          <td>Inter - Milan</td>
-          <td class="odd" onclick="addBet('Inter',2.40)">2.40</td>
-          <td class="odd" onclick="addBet('Barazim',3.20)">3.20</td>
-          <td class="odd" onclick="addBet('Milan',2.90)">2.90</td>
-        </tr>
-      </table>
-    </section>
+async function loadData() {
+    users = await fetch('users.json').then(r => r.json());
+    matches = await fetch('matches.json').then(r => r.json());
+    history = await fetch('history.json').then(r => r.json());
+}
 
-    <!-- Slip Basti -->
-    <aside id="slip">
-      <h3>Slip Basti</h3>
-      <ul id="bets"></ul>
-      <p>Total Kuota: <span id="total">1</span></p>
-      <label>Shuma (€): <input type="number" id="stake" value="10" onchange="calcWin()"></label>
-      <p>Fitim i mundshëm: <span id="win">0</span> €</p>
-    </aside>
-  </main>
+loadData();
 
-  <footer>
-    <p>⚠️ Demo vetëm për testim - nuk ka baste reale</p>
-  </footer>
-
-  <script>
-    let total = 1;
-    function addBet(team, odd) {
-      const bets = document.getElementById("bets");
-      const li = document.createElement("li");
-      li.textContent = team + " @ " + odd;
-      bets.appendChild(li);
-
-      total *= odd;
-      document.getElementById("total").textContent = total.toFixed(2);
-      calcWin();
+function updateBalance() {
+    if(currentUser) {
+        document.getElementById('balance').innerText = currentUser.balance;
     }
-    function calcWin() {
-      let stake = document.getElementById("stake").value;
-      document.getElementById("win").textContent = (stake * total).toFixed(2);
+}
+
+function login() {
+    let username = document.getElementById('loginUser').value;
+    let password = document.getElementById('loginPass').value;
+    let user = users.find(u => u.username===username && u.password===password);
+    if(user){
+        currentUser = user;
+        document.getElementById('loginPanel').style.display='none';
+        document.getElementById('betsPanel').style.display='block';
+        document.getElementById('userPanel').style.display='block';
+        document.getElementById('username').innerText = currentUser.username;
+        updateBalance();
+        renderMatches();
+        renderHistory();
+    } else {
+        alert('Login gabim!');
     }
-  </script>
-</body>
-</html>
-demo-bastesh/
-│── index.html      (faqja kryesore - kreu)
-│── matches.html    (lista e ndeshjeve)
-│── slip.html       (slip bastesh)
-│── login.html      (login/regjistrim demo)
-│── style.css       (stilet e përbashkëta)
-<!DOCTYPE html>
-<html lang="sq">
-<head>
-  <meta charset="UTF-8">
-  <title>Ndeshjet - Demo Baste</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header>
-    <h1>Ndeshjet e Ditës</h1>
-    <nav>
-      <a href="index.html">Kreu</a>
-      <a href="matches.html">Ndeshje</a>
-      <a href="slip.html">Slip Basti</a>
-      <a href="login.html">Login</a>
-    </nav>
-  </header>
+}
 
-  <main>
-    <table>
-      <tr><th>Ndeshja</th><th>1</th><th>X</th><th>2</th></tr>
-      <tr>
-        <td>Real Madrid - Barcelona</td>
-        <td>2.10</td><td>3.50</td><td>3.00</td>
-      </tr>
-      <tr>
-        <td>Inter - Milan</td>
-        <td>2.40</td><td>3.20</td><td>2.90</td>
-      </tr>
-    </table>
-  </main>
-
-  <footer>
-    <p>⚠️ Demo vetëm për testim - nuk ka baste reale</p>
-  </footer>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="sq">
-<head>
-  <meta charset="UTF-8">
-  <title>Slip Basti - Demo Baste</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header>
-    <h1>Slip Basti</h1>
-    <nav>
-      <a href="index.html">Kreu</a>
-      <a href="matches.html">Ndeshje</a>
-      <a href="slip.html">Slip Basti</a>
-      <a href="login.html">Login</a>
-    </nav>
-  </header>
-
-  <main>
-    <section id="slip">
-      <h3>Slip Demo</h3>
-      <ul id="bets"></ul>
-      <p>Total Kuota: <span id="total">1</span></p>
-      <label>Shuma (€): <input type="number" id="stake" value="10" onchange="calcWin()"></label>
-      <p>Fitim i mundshëm: <span id="win">0</span> €</p>
-    </section>
-  </main>
-
-  <footer>
-    <p>⚠️ Demo vetëm për testim - nuk ka baste reale</p>
-  </footer>
-
-  <script>
-    let total = 1;
-    function addBet(team, odd) {
-      const bets = document.getElementById("bets");
-      const li = document.createElement("li");
-      li.textContent = team + " @ " + odd;
-      bets.appendChild(li);
-
-      total *= odd;
-      document.getElementById("total").textContent = total.toFixed(2);
-      calcWin();
+function register() {
+    let username = document.getElementById('regUser').value;
+    let password = document.getElementById('regPass').value;
+    if(users.find(u=>u.username===username)){
+        alert('Username ekziston!');
+        return;
     }
-    function calcWin() {
-      let stake = document.getElementById("stake").value;
-      document.getElementById("win").textContent = (stake * total).toFixed(2);
-    }
-  </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="sq">
-<head>
-  <meta charset="UTF-8">
-  <title>Login - Demo Baste</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header>
-    <h1>Login Demo</h1>
-    <nav>
-      <a href="index.html">Kreu</a>
-      <a href="matches.html">Ndeshje</a>
-      <a href="slip
+    let newUser = {username,password,balance:100};
+    users.push(newUser);
+    alert('Regjistrimi sukses!');
+}
+
+function logout() {
+    currentUser=null;
+    betCart=[];
+    document.getElementById('loginPanel').style.display='block';
+    document.getElementById('betsPanel').style.display='none';
+    document.getElementById('userPanel').style.display='none';
+}
+
+function renderMatches() {
+    let matchesDiv = document.getElementById('matches');
+    matchesDiv.innerHTML = '';
+    matches.forEach(m => {
+        let div = document.createElement('div');
+        div.className='match';
+        div.innerHTML=`<strong>${m.home} vs ${m.away}</strong><br>
+        <button onclick="addToCart(${m.id},'${m.home}',${m.homeOdd})">Bast ${m.home} (${m.homeOdd})</button>
+        <button onclick="addToCart(${m.id},'${m.away}',${m.awayOdd})">Bast ${m.away} (${m.awayOdd})</button>`;
+        matchesDiv.appendChild(div);
+    });
+}
+
+function addToCart(matchId, team, odd){
+    betCart.push({matchId, team, odd});
+    renderCart();
+}
+
+function renderCart(){
+    let cartDiv=document.getElementById('betCart');
+    cartDiv.innerHTML='';
+    betCart.forEach((b,index)=>{
+        let div=document.createElement('div');
+        div.innerText=`${b.team} - Odd: ${b.odd}`;
+        let removeBtn=document.createElement('button');
+        removeBtn.innerText='Hiq';
+        removeBtn.onclick=()=>{betCart.splice(index,1);renderCart();}
+        div.appendChild(removeBtn);
+        cartDiv.appendChild(div);
+    });
+}
+
+function placeBets(){
+    if(betCart.length===0){alert('Cart bosh!'); return;}
+    let totalBet = betCart.length*10;
+    if(currentUser.balance<totalBet){alert('Bilanci i pamjaftueshëm!'); return;}
+    currentUser.balance -= totalBet;
+    betCart.forEach(b=>{
+        // Rezultati demo: fiton rastësisht
+        let win = Math.random() > 0.5;
+        let gain = win ? 10 * b.odd : 0;
+        currentUser.balance += gain;
+        history.push({user:currentUser.username,team:b.team,odd:b.odd,result:win?'Fitore':'Humbje',gain});
+    });
+    betCart=[];
+    renderCart();
+    updateBalance();
+    renderHistory();
+}
+
+function renderHistory(){
+    let historyDiv = document.getElementById('history');
+    historyDiv.innerHTML='';
+    history.filter(h=>h.user===currentUser.username).forEach(h=>{
+        let div = document.createElement('div');
+        div.className='historyItem';
+        div.innerText=`${h.team} - Odd: ${h.odd} | Rezultat: ${h.result} | Fitim: ${h.gain.toFixed(2)} €`;
+        historyDiv.appendChild(div);
+    });
+}
+      body { font-family: Arial; background:#e5e5e5; margin:0; }
+header { background:#1c2833; color:white; padding:15px; text-align:center; }
+#userPanel { float:right; margin-right:20px; }
+#matches, #betCart, #history { margin:20px; }
+.match { background:white; padding:15px; margin-bottom:10px; border-radius:5px; display:flex; justify-content:space-between; align-items:center; }
+.match span.odds { font-weight:bold; color:#2980b9; margin:0 10px; }
+button { background:#27ae60; color:white; border:none; padding:8px 12px; margin:2px; border-radius:4px; cursor:pointer; transition:0.2s; }
+button:hover { background:#2ecc71; }
+input { padding:6px; margin:5px 0; width:150px; }
+#betCart, #history { background:white; padding:15px; border-radius:5px; }
+.historyItem { padding:8px; margin-bottom:5px; border-radius:4px; }
+.historyItem.Fitore { background:#d4efdf; }
+.historyItem.Humbje { background:#f5b7b1; }
+      function randomizeOdds() {
+    matches.forEach(m=>{
+        let changeHome = (Math.random()-0.5)/10; // +/- 0.05
+        let changeAway = (Math.random()-0.5)/10;
+        m.homeOdd = Math.max(1.1, (m.homeOdd+changeHome).toFixed(2));
+        m.awayOdd = Math.max(1.1, (m.awayOdd+changeAway).toFixed(2));
+    });
+    renderMatches();
+}
+
+// ndrysho odds çdo 5 sekonda
+setInterval(()=>{if(currentUser) randomizeOdds()},5000);
+      function resolveBets() {
+    betCart.forEach(b=>{
+        let win = Math.random() > 0.5; // fitore ose humbje
+        let gain = win ? 10*b.odd : 0;
+        currentUser.balance += gain;
+        history.push({
+            user: currentUser.username,
+            team: b.team,
+            odd: b.odd,
+            result: win?'Fitore':'Humbje',
+            gain
+        });
+    });
+    betCart=[];
+    renderCart();
+    updateBalance();
+    renderHistory();
+}
+      function renderHistory(){
+    let historyDiv = document.getElementById('history');
+    historyDiv.innerHTML='';
+    history.filter(h=>h.user===currentUser.username).forEach(h=>{
+        let div = document.createElement('div');
+        div.className='historyItem '+h.result;
+        div.innerText=`${h.team} - Odd: ${h.odd} | Rezultat: ${h.result} | Fitim: ${h.gain.toFixed(2)} €`;
+        historyDiv.appendChild(div);
+    });
+}
+      [
+  {
+    "id": 1,
+    "home": "Real Madrid",
+    "away": "Barcelona",
+    "homeOdd": 1.8,
+    "awayOdd": 2.0,
+    "homeScore": 0,
+    "awayScore": 0,
+    "minute": 0,
+    "status": "LIVE"
+  },
+  {
+    "id": 2,
+    "home": "Manchester United",
+    "away": "Liverpool",
+    "homeOdd": 2.1,
+    "awayOdd": 1.9,
+    "homeScore": 0,
+    "awayScore": 0,
+    "minute": 0,
+    "status": "LIVE"
+  }
+]
+      function renderMatches(){
+    let matchesDiv = document.getElementById('matches');
+    matchesDiv.innerHTML='';
+    matches.forEach(m=>{
+        let div = document.createElement('div');
+        div.className='match';
+        div.innerHTML=`
+        <div>
+          <strong>${m.home} vs ${m.away}</strong><br>
+          <span>Rezultat: ${m.homeScore} - ${m.awayScore} | Minuta: ${m.minute}'</span>
+        </div>
+        <div>
+          <span class="odds">${m.home} (${m.homeOdd})</span>
+          <button onclick="addToCart(${m.id},'${m.home}',${m.homeOdd})">Bast</button>
+          <span class="odds">${m.away} (${m.awayOdd})</span>
+          <button onclick="addToCart(${m.id},'${m.away}',${m.awayOdd})">Bast</button>
+        </div>
+        `;
+        matchesDiv.appendChild(div);
+    });
+}
+      function updateLiveMatches(){
+    matches.forEach(m=>{
+        if(m.status === "LIVE" && m.minute < 90){
+            m.minute += Math.floor(Math.random()*3); // 1-2-3 minuta rritje
+            if(Math.random()<0.05){ m.homeScore +=1; } // 5% mundësi gol për home
+            if(Math.random()<0.05){ m.awayScore +=1; } // 5% mundësi gol për away
+        }
+    });
+    renderMatches();
+}
+
+// Përditëso çdo 5 sekonda
+setInterval(()=>{ if(currentUser) updateLiveMatches() },5000);
+              function placeBets(){
+    if(betCart.length===0){alert('Cart bosh!'); return;}
+    let totalBet = betCart.length*10;
+    if(currentUser.balance<totalBet){alert('Bilanci i pamjaftueshëm!'); return;}
+    currentUser.balance -= totalBet;
+
+    betCart.forEach(b=>{
+        let match = matches.find(m=>m.id===b.matchId);
+        let win = Math.random() > 0.5; // ose mund të bëjmë sipas rezultatit live
+        let gain = win ? 10*b.odd : 0;
+        currentUser.balance += gain;
+        history.push({user:currentUser.username,team:b.team,odd:b.odd,result:win?'Fitore':'Humbje',gain});
+    });
+
+    betCart=[];
+    renderCart();
+    updateBalance();
+    renderHistory();
+}
+      .match { 
+    background:white; 
+    padding:15px; 
+    margin-bottom:10px; 
+    border-radius:5px; 
+    display:grid; 
+    grid-template-columns: 2fr 1fr 1fr 1fr; 
+    align-items:center; 
+    gap:10px;
+    transition: background 0.5s;
+}
+.match.goal { background:#f9e79f; } /* Ndryshon ngjyra kur ka gol */
+span.odds { font-weight:bold; color:#2980b9; }
+button { 
+    background:#27ae60; 
+    color:white; 
+    border:none; 
+    padding:8px 12px; 
+    border-radius:4px; 
+    cursor:pointer; 
+    transition:0.2s; 
+}
+button:hover { background:#2ecc71; }
+      function highlightGoal(match){
+    let divs = document.querySelectorAll('.match');
+    divs.forEach(d=>{
+        if(d.innerText.includes(match.home) && d.innerText.includes(match.away)){
+            d.classList.add('goal');
+            setTimeout(()=>{ d.classList.remove('goal'); },2000); // shfaq ngjyrën 2 sekonda
+        }
+    });
+}
+      function updateLiveMatches(){
+    matches.forEach(m=>{
+        if(m.status === "LIVE" && m.minute < 90){
+            m.minute += Math.floor(Math.random()*3); // 1-3 minuta
+            let scored = false;
+            if(Math.random()<0.05){ m.homeScore +=1; scored=true; }
+            if(Math.random()<0.05){ m.awayScore +=1; scored=true; }
+            if(scored){ highlightGoal(m); } // animacion kur shënohet gol
+        }
+    });
+    renderMatches();
+}
+              function renderMatches(){
+    let matchesDiv = document.getElementById('matches');
+    matchesDiv.innerHTML = '';
+    matches.forEach(m=>{
+        let div = document.createElement('div');
+        div.className='match';
+        div.innerHTML=`
+        <div>${m.home} vs ${m.away}</div>
+        <div>${m.homeScore} - ${m.awayScore}</div>
+        <div>${m.minute}'</div>
+        <div>
+          <span class="odds">${m.home} (${m.homeOdd})</span>
+          <button onclick="addToCart(${m.id},'${m.home}',${m.homeOdd})">Bast</button><br>
+          <span class="odds">${m.away} (${m.awayOdd})</span>
+          <button onclick="addToCart(${m.id},'${m.away}',${m.awayOdd})">Bast</button>
+        </div>
+        `;
+        matchesDiv.appendChild(div);
+    });
+}
+              function adjustOddsByScore(){
+    matches.forEach(m=>{
+        if(m.status==="LIVE"){
+            // Odds për skuadrën që po fiton zvogëlohen, humbësi rritet
+            if(m.homeScore > m.awayScore){
+                m.homeOdd = Math.max(1.1,(m.homeOdd*0.95).toFixed(2));
+                m.awayOdd = (m.awayOdd*1.05).toFixed(2);
+            } else if(m.awayScore > m.homeScore){
+                m.awayOdd = Math.max(1.1,(m.awayOdd*0.95).toFixed(2));
+                m.homeOdd = (m.homeOdd*1.05).toFixed(2);
+            }
+        }
+    });
+}
+setInterval(()=>{ if(currentUser){ adjustOddsByScore(); renderMatches(); } },5000);
+              
