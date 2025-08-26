@@ -96,3 +96,197 @@
   </footer>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo Baste</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f5f5f5; }
+    header { background: #222; color: #fff; padding: 15px; text-align: center; }
+    nav a { color: white; margin: 0 10px; text-decoration: none; }
+    main { display: flex; justify-content: space-between; padding: 20px; }
+    table { width: 65%; border-collapse: collapse; background: white; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+    th { background: #eee; }
+    #slip { width: 30%; background: #fff; padding: 15px; border: 1px solid #ddd; }
+    .odd { cursor: pointer; color: blue; }
+    footer { text-align: center; padding: 15px; background: #222; color: white; margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Demo Faqe Bastesh</h1>
+    <nav>
+      <a href="#">Kreu</a>
+      <a href="#">Ndeshje</a>
+      <a href="#">Kuota</a>
+      <a href="#">Slip Basti</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Ndeshjet -->
+    <section>
+      <h2>Ndeshjet e Ditës</h2>
+      <table>
+        <tr>
+          <th>Ndeshja</th><th>1</th><th>X</th><th>2</th>
+        </tr>
+        <tr>
+          <td>Real Madrid - Barcelona</td>
+          <td class="odd" onclick="addBet('Real Madrid',2.10)">2.10</td>
+          <td class="odd" onclick="addBet('Barazim',3.50)">3.50</td>
+          <td class="odd" onclick="addBet('Barcelona',3.00)">3.00</td>
+        </tr>
+        <tr>
+          <td>Inter - Milan</td>
+          <td class="odd" onclick="addBet('Inter',2.40)">2.40</td>
+          <td class="odd" onclick="addBet('Barazim',3.20)">3.20</td>
+          <td class="odd" onclick="addBet('Milan',2.90)">2.90</td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- Slip Basti -->
+    <aside id="slip">
+      <h3>Slip Basti</h3>
+      <ul id="bets"></ul>
+      <p>Total Kuota: <span id="total">1</span></p>
+      <label>Shuma (€): <input type="number" id="stake" value="10" onchange="calcWin()"></label>
+      <p>Fitim i mundshëm: <span id="win">0</span> €</p>
+    </aside>
+  </main>
+
+  <footer>
+    <p>⚠️ Demo vetëm për testim - nuk ka baste reale</p>
+  </footer>
+
+  <script>
+    let total = 1;
+    function addBet(team, odd) {
+      const bets = document.getElementById("bets");
+      const li = document.createElement("li");
+      li.textContent = team + " @ " + odd;
+      bets.appendChild(li);
+
+      total *= odd;
+      document.getElementById("total").textContent = total.toFixed(2);
+      calcWin();
+    }
+    function calcWin() {
+      let stake = document.getElementById("stake").value;
+      document.getElementById("win").textContent = (stake * total).toFixed(2);
+    }
+  </script>
+</body>
+</html>
+demo-bastesh/
+│── index.html      (faqja kryesore - kreu)
+│── matches.html    (lista e ndeshjeve)
+│── slip.html       (slip bastesh)
+│── login.html      (login/regjistrim demo)
+│── style.css       (stilet e përbashkëta)
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <title>Ndeshjet - Demo Baste</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Ndeshjet e Ditës</h1>
+    <nav>
+      <a href="index.html">Kreu</a>
+      <a href="matches.html">Ndeshje</a>
+      <a href="slip.html">Slip Basti</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <main>
+    <table>
+      <tr><th>Ndeshja</th><th>1</th><th>X</th><th>2</th></tr>
+      <tr>
+        <td>Real Madrid - Barcelona</td>
+        <td>2.10</td><td>3.50</td><td>3.00</td>
+      </tr>
+      <tr>
+        <td>Inter - Milan</td>
+        <td>2.40</td><td>3.20</td><td>2.90</td>
+      </tr>
+    </table>
+  </main>
+
+  <footer>
+    <p>⚠️ Demo vetëm për testim - nuk ka baste reale</p>
+  </footer>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <title>Slip Basti - Demo Baste</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Slip Basti</h1>
+    <nav>
+      <a href="index.html">Kreu</a>
+      <a href="matches.html">Ndeshje</a>
+      <a href="slip.html">Slip Basti</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="slip">
+      <h3>Slip Demo</h3>
+      <ul id="bets"></ul>
+      <p>Total Kuota: <span id="total">1</span></p>
+      <label>Shuma (€): <input type="number" id="stake" value="10" onchange="calcWin()"></label>
+      <p>Fitim i mundshëm: <span id="win">0</span> €</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>⚠️ Demo vetëm për testim - nuk ka baste reale</p>
+  </footer>
+
+  <script>
+    let total = 1;
+    function addBet(team, odd) {
+      const bets = document.getElementById("bets");
+      const li = document.createElement("li");
+      li.textContent = team + " @ " + odd;
+      bets.appendChild(li);
+
+      total *= odd;
+      document.getElementById("total").textContent = total.toFixed(2);
+      calcWin();
+    }
+    function calcWin() {
+      let stake = document.getElementById("stake").value;
+      document.getElementById("win").textContent = (stake * total).toFixed(2);
+    }
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Demo Baste</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Login Demo</h1>
+    <nav>
+      <a href="index.html">Kreu</a>
+      <a href="matches.html">Ndeshje</a>
+      <a href="slip
